@@ -15,6 +15,26 @@ name = "ASasdasd"
 
 path = Path.fromStr "Day1/input.txt"
 
+
+
+solveElf = \rawElf ->
+    Str.split rawElf "\n"
+    # ["123123", "2323"]
+    |> List.map ((\i -> Str.toNat i |>  Result.withDefault 0))
+    # [123123, 1231312]
+    |> (\elves -> List.walk elves 0 (\elf,total -> elf + total))
+
+
+solve : Str -> Str
+solve = \contentsStr ->
+    Str.split contentsStr "\n\n"
+    |> List.map solveElf
+    |> List.sortDesc
+    # |> Num.toStr
+    |> List.first
+    |> Result.withDefault 0
+    |> Num.toStr
+
 solution : Task {} []
 solution =
     # # task : Task Str {}
@@ -44,7 +64,7 @@ solution =
     # printIfOk : Result {} * -> Str
     printIfOk = \result ->
         when result is
-            Ok msg -> Stdout.line msg
+            Ok msg -> Stdout.line (solve msg)
             Err anythingElse ->
                 # Stdout.line "Err"
                 when anythingElse is
