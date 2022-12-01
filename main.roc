@@ -5,11 +5,3 @@ app "hello"
 
 main =
     Day1.Solution2.solution
-    # body <- when Day1.Solution2.solution is
-    #      Ok msg ->
-    #          # Stdout.line msg
-    #          "ok body"
-    #      Err errMsg ->
-    #          # Stdout.line errMsg
-    #          "err body"
-    # Task.attempt body Stdout.line
