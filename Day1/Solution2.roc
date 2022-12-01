@@ -31,8 +31,8 @@ solve = \contentsStr ->
     |> List.map solveElf
     |> List.sortDesc
     # |> Num.toStr
-    |> List.first
-    |> Result.withDefault 0
+    |> List.takeFirst 3
+    |> (\elves -> List.walk elves 0 (\elf,total -> elf + total))
     |> Num.toStr
 
 solution : Task {} []
