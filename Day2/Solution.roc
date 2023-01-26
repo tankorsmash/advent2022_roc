@@ -1,14 +1,14 @@
 interface Day2.Solution
     exposes [solution]
     imports [
-        pf.Process,
+        # pf.Process,
         pf.Stdout,
-        pf.Stderr,
-        # pf.Task.{ Task },
+        # pf.Stderr,
+        pf.Task.{ Task },
         pf.File,
         pf.Path,
-        pf.Env,
-        pf.Dir,
+        # pf.Env,
+        # pf.Dir,
     ]
 
 path = Path.fromStr "Day2/input.txt"
@@ -44,35 +44,20 @@ toRPS = \char ->
 
 calcResult : RPS, RPS -> GameResult
 calcResult = \you, them ->
-    #Draws
-    if you == Rock && them == Rock then
-        Draw
-    else if you == Paper && them == Paper then
-        Draw
-    else if you == Scissors && them == Scissors then
-        Draw
-    else if you == Rock && them ==  Scissors then Win
-    else if you == Scissors && them ==  Paper then Win
-    else if you == Paper && them ==  Rock then Win
+    when [ you, them ] is
+        [Rock, Rock] -> Draw
+        [Paper, Paper] -> Draw
+        [Scissors, Scissors] -> Draw
 
-    else if you == Scissors && them == Rock then Loss
-    else if you == Paper && them == Scissors then Loss
-    else if you == Rock && them == Paper then Loss
+        [Rock, Scissors] -> Win
+        [Scissors, Paper] -> Win
+        [Paper, Rock] -> Win
 
-    else
-        Win
-    # when ( you, them ) is
-    #     (Rock, Rock) -> Draw
-    #     (Paper, Paper) -> Draw
-    #     (Scissors, Scissors) -> Draw
-    #
-    #     (Rock, Scissors) -> Win
-    #     (Scissors, Paper) -> Win
-    #     (Paper, Rock) -> Win
-    #
-    #     (Scissors, Rock) -> Loss
-    #     (Paper, Scissors) -> Loss
-    #     (Rock, Paper) -> Loss
+        [Scissors, Rock] -> Loss
+        [Paper, Scissors] -> Loss
+        [Rock, Paper] -> Loss
+
+        _ -> crash "impossible"
 
 
 calc : List RPS -> I32
@@ -83,8 +68,8 @@ calc = \rpses ->
                 scoredResult = scoreGameResult result
                 scoredRPS = scoreRPS leftRPS
                 scoredRPS + scoredResult
-            [left] -> -100
-            [left, right, other] -> -1000
+            [_] -> -100
+            [_, _, _] -> -1000
             [] -> -10000
             _ -> -100000
 
@@ -103,14 +88,13 @@ solveElf = \rawElf ->
 
 solve : Str -> Str
 solve = \contentsStr ->
-    dbg 1
-    "wtf"
-    # Str.split contentsStr "\n"
-    # |> List.map solveElf
-    # # |> List.sortDesc
-    # # |> List.takeFirst 3
-    # |> List.sum
-    # |> Num.toStr
+    dbg "wtf"
+    Str.split contentsStr "\n"
+    |> List.map solveElf
+    # |> List.sortDesc
+    # |> List.takeFirst 3
+    |> List.sum
+    |> Num.toStr
 
 solution : Task {} []
 solution =
