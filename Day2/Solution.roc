@@ -17,10 +17,9 @@ RPS : [Rock, Paper, Scissors]
 
 GameResult : [Win, Draw, Loss]
 
-
 scoreRPS : RPS -> I32
 scoreRPS = \rps ->
-    when rps is 
+    when rps is
         Rock -> 1
         Paper -> 2
         Scissors -> 3
@@ -32,7 +31,6 @@ scoreGameResult = \gameResult ->
         Draw -> 3
         Loss -> 0
 
-
 toRPS : Str -> RPS
 toRPS = \char ->
     when char is
@@ -41,57 +39,51 @@ toRPS = \char ->
         "C" | "Z" -> Scissors
         _ -> Rock
 
-
 calcResult : RPS, RPS -> GameResult
 calcResult = \you, them ->
-    when [ you, them ] is
+    when [you, them] is
         [Rock, Rock] -> Draw
         [Paper, Paper] -> Draw
         [Scissors, Scissors] -> Draw
-
         [Rock, Scissors] -> Win
         [Scissors, Paper] -> Win
         [Paper, Rock] -> Win
-
         [Scissors, Rock] -> Loss
         [Paper, Scissors] -> Loss
         [Rock, Paper] -> Loss
-
         _ -> crash "impossible"
-
 
 calc : List RPS -> I32
 calc = \rpses ->
-        when rpses is
-            [leftRPS, rightRPS] ->
-                result = (calcResult leftRPS rightRPS)
-                scoredResult = scoreGameResult result
-                scoredRPS = scoreRPS leftRPS
-                scoredRPS + scoredResult
-            [_] -> -100
-            [_, _, _] -> -1000
-            [] -> -10000
-            _ -> -100000
+    when rpses is
+        [leftRPS, rightRPS] ->
+            result = calcResult leftRPS rightRPS
+            scoredResult = scoreGameResult result
+            scoredRPS = scoreRPS leftRPS
+            scoredRPS + scoredResult
+
+        [_] -> -100
+        [_, _, _] -> -1000
+        [] -> -10000
+        _ -> -100000
 
 solveElf : Str -> I32
 solveElf = \rawElf ->
-    Str.split rawElf " "
-    # ["A" "Z"]
+    Str.split rawElf " " # ["A" "Z"]
     |> List.map toRPS
     |> calc
-    # # ["123123", "2323"]
-    # |> List.map ((\i -> Str.toNat i |>  Result.withDefault 0))
-    # # [123123, 1231312]
-    # |> (\elves -> List.walk elves 0 (\elf,total -> elf + total))
-    
-
+# # ["123123", "2323"]
+# |> List.map ((\i -> Str.toNat i |>  Result.withDefault 0))
+# # [123123, 1231312]
+# |> (\elves -> List.walk elves 0 (\elf,total -> elf + total))
 
 solve : Str -> Str
 solve = \contentsStr ->
-    dbg "wtf"
+    dbg
+        "wtf"
+
     Str.split contentsStr "\n"
-    |> List.map solveElf
-    # |> List.sortDesc
+    |> List.map solveElf # |> List.sortDesc
     # |> List.takeFirst 3
     |> List.sum
     |> Num.toStr
@@ -108,6 +100,7 @@ solution =
                 when anythingElse is
                     FileReadErr _pathErr readErr ->
                         Stdout.line (File.readErrToStr readErr)
+
                     FileReadUtf8Err _ _ ->
                         Stdout.line "utf8 err"
 
