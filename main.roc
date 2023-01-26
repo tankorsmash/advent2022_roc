@@ -5,35 +5,35 @@ app "AOC2022"
         pf.Process,
         pf.Task.{ Task },
         pf.Arg,
-        # Day1.Solution2,
-        # Day2.Solution
+        Day1.Solution2,
+        Day2.Solution
     ]
     provides [main] to pf
 
-dividendConfig =
+dayConfig =
     Arg.i64Option {
-        long: "dividend",
-        short: "n",
-        help: "the number to divide; corresponds to a numerator",
+        long: "day",
+        short: "d",
+        help: "The Advent of Code 2022 day to run",
     }
 
-divisorConfig =
+partConfig =
     Arg.i64Option {
-        long: "divisor",
-        short: "d",
-        help: "the number to divide by; corresponds to a denominator",
+        long: "part",
+        short: "p",
+        help: "which part of the day's challenge (usually 1 or 2)",
     }
 
 parser =
     divCmd =
         Arg.succeed
             (
-                \dividend ->
-                    \divisor ->
-                        Div (Num.toF64 dividend) (Num.toF64 divisor)
+                \dayNum ->
+                    \partNum ->
+                        Day (dayNum) (Part (partNum))
             )
-        |> Arg.withParser dividendConfig
-        |> Arg.withParser divisorConfig
+        |> Arg.withParser dayConfig
+        |> Arg.withParser partConfig
         |> Arg.subCommand "div"
 
     Arg.choice [divCmd]
@@ -46,15 +46,25 @@ main =
     when Arg.parseFormatted parser args is
         Ok cmd ->
             runCmd cmd
-            |> Num.toStr
-            |> Stdout.line
+            |> Task.map Stdout.line
 
         Err helpMenu ->
             {} <- Stdout.line helpMenu |> Task.await
             Process.exit 1
 
 runCmd = \cmd ->
-    when cmd is
-        Div n d -> n / d
-        Log b n ->
-            runCmd (Div (Num.log n) (Num.log b))
+
+    t : Task Str []
+    t =
+        when cmd is
+            Day dayNum (Part partNum) ->
+                when dayNum is
+                    1 ->
+                        Day1.Solution2.solution
+                    2 ->
+                        Day2.Solution.solution
+                    _ ->
+                        dbg "asdad"
+                        Task.succeed "ASD"
+    t
+

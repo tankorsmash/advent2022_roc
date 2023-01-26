@@ -88,20 +88,20 @@ solve = \contentsStr ->
     |> List.sum
     |> Num.toStr
 
-solution : Task {} []
+solution : Task Str {}
 solution =
     task =
         File.readUtf8 path
 
     printIfOk = \result ->
         when result is
-            Ok msg -> Stdout.line (solve msg)
+            Ok msg -> (solve msg)
             Err anythingElse ->
                 when anythingElse is
                     FileReadErr _pathErr readErr ->
-                        Stdout.line (File.readErrToStr readErr)
+                        (File.readErrToStr readErr)
 
                     FileReadUtf8Err _ _ ->
-                        Stdout.line "utf8 err"
+                        "utf8 err"
 
     Task.attempt task printIfOk

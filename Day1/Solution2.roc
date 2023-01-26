@@ -27,20 +27,28 @@ solve = \contentsStr ->
     |> (\elves -> List.walk elves 0 (\elf, total -> elf + total))
     |> Num.toStr
 
-solution : Task {} []
+IOError : [ReadErr, WriteErr]
+FileError : [ FileReadErr, FileReadUtf8Err]
+
+# solution : Task Str []
 solution =
+    # task : Task Str IOError
     task =
         File.readUtf8 path
 
+    # printIfOk : Result Str _ -> Str
     printIfOk = \result ->
-        when result is
-            Ok msg -> Stdout.line (solve msg)
-            Err anythingElse ->
-                when anythingElse is
+        (when result is
+            Ok msg -> (solve msg)
+            Err errorType ->
+                when errorType is
                     FileReadErr _pathErr readErr ->
-                        Stdout.line (File.readErrToStr readErr)
+                        (File.readErrToStr readErr)
 
                     FileReadUtf8Err _ _ ->
-                        Stdout.line "utf8 err"
+                        "utf8 err"
+        )
+
+            |> Task.succeed
 
     Task.attempt task printIfOk
