@@ -6,7 +6,7 @@ app "AOC2022"
         pf.Task.{ Task },
         pf.Arg,
         Day1.Solution2,
-        Day2.Solution
+        Day2.Solution,
     ]
     provides [main] to pf
 
@@ -45,11 +45,21 @@ main =
 
     when Arg.parseFormatted parser args is
         Ok cmd ->
-            runCmd cmd
-            |> Task.map Stdout.line
+            # ranTask : Task Str []
+            # ranTask = runCmd cmd
+            {} <- runCmd cmd
+
+            # res <- ranTask |> Task.await
+
+            Task.await ranTask Stdout.line
+            Process.exit 1
 
         Err helpMenu ->
-            {} <- Stdout.line helpMenu |> Task.await
+            helpTask : Task {} []
+            helpTask = Stdout.line helpMenu
+
+            {} <- helpTask |> Task.await
+
             Process.exit 1
 
 runCmd = \cmd ->
@@ -61,10 +71,14 @@ runCmd = \cmd ->
                 when dayNum is
                     1 ->
                         Day1.Solution2.solution
+
                     2 ->
                         Day2.Solution.solution
+
                     _ ->
-                        dbg "asdad"
+                        dbg
+                            "asdad"
+
                         Task.succeed "ASD"
     t
 

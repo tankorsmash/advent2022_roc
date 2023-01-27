@@ -28,7 +28,7 @@ solve = \contentsStr ->
     |> Num.toStr
 
 IOError : [ReadErr, WriteErr]
-FileError : [ FileReadErr, FileReadUtf8Err]
+FileError : [FileReadErr, FileReadUtf8Err]
 
 # solution : Task Str []
 solution =
@@ -38,17 +38,17 @@ solution =
 
     # printIfOk : Result Str _ -> Str
     printIfOk = \result ->
-        (when result is
-            Ok msg -> (solve msg)
-            Err errorType ->
-                when errorType is
-                    FileReadErr _pathErr readErr ->
-                        (File.readErrToStr readErr)
+        (
+            when result is
+                Ok msg -> solve msg
+                Err errorType ->
+                    when errorType is
+                        FileReadErr _pathErr readErr ->
+                            File.readErrToStr readErr
 
-                    FileReadUtf8Err _ _ ->
-                        "utf8 err"
+                        FileReadUtf8Err _ _ ->
+                            "utf8 err"
         )
-
-            |> Task.succeed
+        |> Task.succeed
 
     Task.attempt task printIfOk
